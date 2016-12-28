@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ScreenOn</string>
+    <string name="default_app_label">Screen On!</string>
+    <string name="screen_on">Screen on</string>
+    <string name="screen_off">Screen off</string>
+    <string name="on_description">changes the screen on quick setting to false</string>
+    <string name="off_description">changes the screen on quick setting to true</string>
+</resources>
