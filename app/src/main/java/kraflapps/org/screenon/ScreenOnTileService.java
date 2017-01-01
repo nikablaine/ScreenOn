@@ -3,12 +3,11 @@ package kraflapps.org.screenon;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
-import android.os.PowerManager;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 
-import static kraflapps.org.screenon.Consts.KEEP_ON_KEY;
+import static kraflapps.org.screenon.Consts.KILL_SERVICE;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -20,13 +19,6 @@ import static kraflapps.org.screenon.Consts.KEEP_ON_KEY;
 public class ScreenOnTileService extends TileService {
 
     private static final String LOG_TAG = ScreenOnTileService.class.getSimpleName();
-    private PowerManager.WakeLock mWakeLock;
-
-    @Override
-    public void onDestroy() {
-        Log.d(LOG_TAG, "Destroying..");
-        super.onDestroy();
-    }
 
     @Override
     public void onTileAdded() {
@@ -74,7 +66,7 @@ public class ScreenOnTileService extends TileService {
                     getString(R.string.on_description));
             tile.setState(Tile.STATE_INACTIVE);
             tile.updateTile();
-            releaseWakeLock();
+            stopBackgroundService();
         }
     }
 
@@ -88,30 +80,20 @@ public class ScreenOnTileService extends TileService {
                     getString(R.string.off_description));
             tile.setState(Tile.STATE_ACTIVE);
             tile.updateTile();
-            acquireWakeLock();
+            startBackgroundService();
         }
     }
 
-    private void acquireWakeLock() {
-        /*Log.d(LOG_TAG, "Acquiring wake lock..");
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-                "ScreenOnWakelockTag");
-        mWakeLock.acquire();
-        Log.d(LOG_TAG, "Lock acquired: " + mWakeLock);*/
-        Log.d(LOG_TAG, "Sending broadcast..");
-        Intent intent = new Intent(this, WakefulReceiver.class);
-        intent.putExtra(KEEP_ON_KEY, true);
-        sendBroadcast(intent);
+    private void startBackgroundService() {
+        Log.d(LOG_TAG, "Starting background service..");
+        Intent intent = new Intent(this, ScreenOnService.class);
+        startService(intent);
     }
 
-    private void releaseWakeLock() {
-        /*if (mWakeLock != null) {
-            Log.d(LOG_TAG, "Releasing wake lock: " + mWakeLock);
-            mWakeLock.release();
-        }*/
-        Intent intent = new Intent(this, WakefulReceiver.class);
-        intent.putExtra(KEEP_ON_KEY, false);
-        sendBroadcast(intent);
+    private void stopBackgroundService() {
+        Log.d(LOG_TAG, "Stopping background service..");
+        Intent intent = new Intent(this, ScreenOnService.class);
+        intent.putExtra(KILL_SERVICE, true);
+        startService(intent);
     }
 }

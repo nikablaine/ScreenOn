@@ -5,5 +5,5 @@ package kraflapps.org.screenon;
  */
 
 public class Consts {
-    public static final String KEEP_ON_KEY = "keep_on";
+    public static final String KILL_SERVICE = "keep_on";
 }
