@@ -38,12 +38,25 @@ public class ScreenOnTileService extends TileService {
     @Override
     public void onStartListening() {
         super.onStartListening();
-        changeState(getState());
+        keepState(getState());
     }
 
     int getState() {
         Tile tile = getQsTile();
         return tile == null ? Tile.STATE_UNAVAILABLE : tile.getState();
+    }
+
+    void keepState(int state) {
+        switch (state) {
+            case Tile.STATE_ACTIVE:
+                changeToActive();
+                break;
+            case Tile.STATE_INACTIVE:
+                changeToInactive();
+                break;
+            default:
+                break;
+        }
     }
 
     void changeState(int state) {
