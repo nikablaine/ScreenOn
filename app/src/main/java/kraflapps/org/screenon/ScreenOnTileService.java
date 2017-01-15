@@ -1,6 +1,5 @@
 package kraflapps.org.screenon;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.service.quicksettings.Tile;
@@ -10,11 +9,9 @@ import android.util.Log;
 import static kraflapps.org.screenon.Consts.KILL_SERVICE;
 
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
+ * Tile service responsible for QS tile handling.
+ *
+ * @author Veronika Rodionova nika.blaine@gmail.com
  */
 public class ScreenOnTileService extends TileService {
 
@@ -35,6 +32,12 @@ public class ScreenOnTileService extends TileService {
     @Override
     public void onClick() {
         super.onClick();
+        changeState(getState());
+    }
+
+    @Override
+    public void onStartListening() {
+        super.onStartListening();
         changeState(getState());
     }
 

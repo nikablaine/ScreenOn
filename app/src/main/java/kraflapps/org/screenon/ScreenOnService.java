@@ -43,7 +43,7 @@ public class ScreenOnService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO think over
+
     }
 
     private void acquireWakeLock() {

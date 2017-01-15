@@ -28,8 +28,5 @@
             </intent-filter>
         </service>
 
-
-        <receiver android:name=".WakefulReceiver" />
-
     </application>
 </manifest>
