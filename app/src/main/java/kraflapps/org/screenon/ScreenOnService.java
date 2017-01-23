@@ -56,7 +56,7 @@ public class ScreenOnService extends IntentService {
     }
 
     private void releaseWakeLock() {
-        if (mWakeLock != null) {
+        if (mWakeLock != null && mWakeLock.isHeld()) {
             Log.d(LOG_TAG, "Releasing wake lock: " + mWakeLock);
             mWakeLock.release();
         } else {

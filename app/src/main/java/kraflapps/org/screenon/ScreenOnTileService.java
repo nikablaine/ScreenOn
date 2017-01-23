@@ -1,7 +1,9 @@
 package kraflapps.org.screenon;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
+import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
@@ -16,6 +18,7 @@ import static kraflapps.org.screenon.Consts.KILL_SERVICE;
 public class ScreenOnTileService extends TileService {
 
     private static final String LOG_TAG = ScreenOnTileService.class.getSimpleName();
+    private static final String STATE = "ScreenOnState";
 
     @Override
     public void onTileAdded() {
@@ -41,34 +44,24 @@ public class ScreenOnTileService extends TileService {
         keepState(getState());
     }
 
-    int getState() {
-        Tile tile = getQsTile();
-        return tile == null ? Tile.STATE_UNAVAILABLE : tile.getState();
+    boolean getState() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return preferences.getBoolean(STATE, false);
     }
 
-    void keepState(int state) {
-        switch (state) {
-            case Tile.STATE_ACTIVE:
-                changeToActive();
-                break;
-            case Tile.STATE_INACTIVE:
-                changeToInactive();
-                break;
-            default:
-                break;
+    void keepState(boolean state) {
+        if (state) {
+            changeToActive();
+        } else {
+            changeToInactive();
         }
     }
 
-    void changeState(int state) {
-        switch (state) {
-            case Tile.STATE_ACTIVE:
-                changeToInactive();
-                break;
-            case Tile.STATE_INACTIVE:
-                changeToActive();
-                break;
-            default:
-                break;
+    void changeState(boolean state) {
+        if (state) {
+            changeToInactive();
+        } else {
+            changeToActive();
         }
     }
 
@@ -82,6 +75,7 @@ public class ScreenOnTileService extends TileService {
                     getString(R.string.on_description));
             tile.setState(Tile.STATE_INACTIVE);
             tile.updateTile();
+            inactiveToPreferences();
             stopBackgroundService();
         }
     }
@@ -96,8 +90,24 @@ public class ScreenOnTileService extends TileService {
                     getString(R.string.off_description));
             tile.setState(Tile.STATE_ACTIVE);
             tile.updateTile();
+            activeToPreferences();
             startBackgroundService();
         }
+    }
+
+    private void activeToPreferences() {
+        stateToPreferences(true);
+    }
+
+    private void inactiveToPreferences() {
+        stateToPreferences(false);
+    }
+
+    private void stateToPreferences(boolean state) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(STATE, state);
+        editor.apply();
     }
 
     private void startBackgroundService() {
